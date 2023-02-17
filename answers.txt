@@ -1,0 +1,11 @@
+db.bars.find({$or:[{phone:""},{addr:""}]});
+
+db.bars.aggregate([{$group:{_id:"$city", count:{$sum:1}}},{$match:{"count":{$gt:4}}}]);
+
+db.bars.find({beers : {$exists:true}, $where:'this.beers.length>5'}).count();
+
+db.drinkers.find({"history":{$elemMatch: {$or:[{"day":"Saturday"},{"day":"Sunday"}]}}});
+
+db.drinkers.aggregate([{$unwind: "$history",},{$unwind: "$history.set_of_beers",},{$match: {"history.set_of_beers": "Blue Tattoo",},},{$group: {_id: "$_id",name: { $first: "$name" },num_of_orders_of_Blue_Tattoo: {$count: {},},},},{$match: {num_of_orders_of_Blue_Tattoo: { $gte: 2 },},},]);
+
+db.drinkers.insertOne({"name": "Lucy", "city": "Edison", "phone": "732-571-9871", "addr": "433 river Road","age":23,"favorite_bar_foods":["French fries", "Onion rings","Nachos","Wings"]});
